@@ -2,177 +2,578 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Vibe Coding 入门随身手册</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vibe Coding 入门指南</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3b82f6',
+                        light: '#f1f5f9',
+                    },
+                    fontFamily: {
+                        sans: ['system-ui', ' -apple-system', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
     <style>
-        :root {
-            --primary: #007AFF;
-            --bg-color: #F2F2F7;
-            --card-bg: #FFFFFF;
-            --text-main: #1C1C1E;
-            --text-muted: #8E8E93;
-            --border-color: #E5E5EA;
-        }
-
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            line-height: 1.6;
-            padding-bottom: 80px;
-        }
-
-        /* 顶部导航 */
-        header {
-            background-color: var(--card-bg);
-            padding: 16px 20px;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            border-bottom: 1px solid var(--border-color);
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-        }
-        h1 { font-size: 20px; font-weight: 600; text-align: center; margin-bottom: 12px;}
-        
-        .nav-tabs {
-            display: flex;
-            justify-content: space-between;
-            overflow-x: auto;
-            scrollbar-width: none;
-        }
-        .nav-tabs::-webkit-scrollbar { display: none; }
-        .nav-tab {
-            font-size: 14px;
-            color: var(--text-muted);
-            text-decoration: none;
-            padding: 6px 12px;
-            white-space: nowrap;
-            border-radius: 16px;
-        }
-        .nav-tab.active {
-            background-color: var(--primary);
-            color: white;
-            font-weight: 500;
-        }
-
-        /* 内容区容器 */
-        main { padding: 16px; }
-        section { display: none; animation: fadeIn 0.3s ease; }
-        section.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
-
-        h2 { font-size: 18px; margin: 24px 0 12px 0; color: var(--primary); display: flex; align-items: center; gap: 6px;}
-
-        /* 卡片样式 */
-        .card {
-            background: var(--card-bg);
-            border-radius: 12px;
-            padding: 16px;
-            margin-bottom: 16px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-        }
-
-        /* 折叠面板 (名词解释) */
-        .accordion-item {
-            border-bottom: 1px solid var(--border-color);
-            padding: 12px 0;
-        }
-        .accordion-item:last-child { border-bottom: none; }
-        .accordion-header {
-            font-weight: 600;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            cursor: pointer;
-        }
-        .accordion-header::after { content: '+'; color: var(--primary); font-size: 18px;}
-        .accordion-item.open .accordion-header::after { content: '−'; }
-        .accordion-content {
-            display: none;
-            padding-top: 8px;
-            font-size: 14px;
-            color: #333;
-        }
-        .accordion-item.open .accordion-content { display: block; }
-        .analogy { background: #f9f9f9; padding: 8px; border-left: 3px solid var(--primary); margin-top: 6px; font-size: 13px; color: #555;}
-
-        /* 提示词卡片 */
-        .prompt-card { position: relative; }
-        .prompt-title { font-weight: 600; margin-bottom: 8px; font-size: 16px; display: flex; justify-content: space-between; align-items: center;}
-        .prompt-reason { font-size: 12px; color: var(--text-muted); margin-bottom: 12px; background: #f0f0f5; padding: 6px 10px; border-radius: 6px;}
-        .prompt-text {
-            background-color: #282A36;
-            color: #F8F8F2;
-            padding: 16px;
-            border-radius: 8px;
-            font-size: 14px;
+        pre {
             white-space: pre-wrap;
             word-wrap: break-word;
-            font-family: monospace;
-            margin-bottom: 12px;
         }
-        .copy-btn {
-            background-color: var(--primary);
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-size: 14px;
-            font-weight: 500;
-            width: 100%;
-            cursor: pointer;
-            transition: background 0.2s;
+        .accordion-arrow {
+            transition: transform 0.2s ease;
         }
-        .copy-btn.success { background-color: #34C759; }
-
-        /* 流程步骤 */
-        .step-item {
-            display: flex;
-            margin-bottom: 16px;
+        .accordion-content {
+            transition: max-height 0.3s ease;
+            overflow: hidden;
         }
-        .step-num {
-            background: var(--primary);
-            color: white;
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 12px;
-            font-weight: bold;
-            margin-right: 12px;
-            flex-shrink: 0;
+        html {
+            scroll-padding-top: 70px;
+            scroll-behavior: smooth;
         }
-        .step-content strong { display: block; margin-bottom: 4px; }
-        .step-content p { font-size: 14px; color: #555; margin: 0;}
-
-        /* 标签 */
-        .tag { display: inline-block; background: #e5f0ff; color: var(--primary); padding: 2px 8px; border-radius: 10px; font-size: 12px; margin-right: 6px;}
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
     </style>
 </head>
-<body>
-
-    <header>
-        <h1>Vibe Coding 入门指南</h1>
-        <div class="nav-tabs">
-            <a href="#prompts" class="nav-tab active" onclick="switchTab('prompts')">💬 提示词库</a>
-            <a href="#process" class="nav-tab" onclick="switchTab('process')">🗺️ 核心流程</a>
-            <a href="#concepts" class="nav-tab" onclick="switchTab('concepts')">📖 概念速查</a>
-            <a href="#tips" class="nav-tab" onclick="switchTab('tips')">💡 避坑指南</a>
+<body class="bg-gray-50 text-gray-800 font-sans pt-14">
+    <!-- 固定顶部导航 -->
+    <nav class="fixed top-0 left-0 right-0 bg-white shadow-sm z-50">
+        <div class="container mx-auto px-4 max-w-3xl">
+            <div class="flex items-center gap-4 overflow-x-auto py-3 no-scrollbar">
+                <a href="#intro" class="whitespace-nowrap text-sm font-medium text-gray-700 hover:text-primary transition-colors">指南介绍</a>
+                <a href="#glossary" class="whitespace-nowrap text-sm font-medium text-gray-700 hover:text-primary transition-colors">名词速查</a>
+                <a href="#process" class="whitespace-nowrap text-sm font-medium text-gray-700 hover:text-primary transition-colors">开发流程</a>
+                <a href="#prompts" class="whitespace-nowrap text-sm font-medium text-gray-700 hover:text-primary transition-colors">提示词模板</a>
+                <a href="#qa" class="whitespace-nowrap text-sm font-medium text-gray-700 hover:text-primary transition-colors">万能提问</a>
+                <a href="#tips" class="whitespace-nowrap text-sm font-medium text-gray-700 hover:text-primary transition-colors">新手建议</a>
+            </div>
         </div>
-    </header>
+    </nav>
 
-    <main>
-        <section id="prompts" class="active">
-            <h2>💬 核心提示词模板</h2>
-            
-            <div class="card prompt-card">
-                <div class="prompt-title">0-A：验证想法 <span class="tag">第0步</span></div>
-                <div class="prompt-reason">避免一开始方向走偏，动工前先画草图。</div>
-                <div class="prompt-text" id="p0a">我有一个产品想法：【用一两句话描述你的想法】
+    <div class="container mx-auto px-4 py-6 max-w-3xl">
+        <!-- 头部 -->
+        <header class="mb-8 text-center" id="intro">
+            <h1 class="text-[clamp(2rem,5vw,2.5rem)] font-bold text-primary mb-2">Vibe Coding</h1>
+            <p class="text-[clamp(1rem,2vw,1.25rem)] text-gray-600">零编程新手入门指南 · 点击名词查看解释</p>
+        </header>
+
+        <!-- 开头说明 -->
+        <div class="bg-white rounded-xl shadow-sm p-5 mb-8">
+            <h2 class="font-semibold text-lg mb-3">这份指南包含什么？</h2>
+            <ul class="list-disc pl-5 space-y-1">
+                <li>📖 所有开发相关核心名词，点击即可查看大白话解释</li>
+                <li>💬 全流程可复用提示词模板，直接复制使用</li>
+                <li>🛠 适合零基础新手的工具推荐</li>
+                <li>✅ 可落地的第一步行动建议</li>
+            </ul>
+        </div>
+
+        <!-- 第二部分：核心名词速查（折叠手风琴） -->
+        <section class="mb-8" id="glossary">
+            <h2 class="text-2xl font-bold text-primary mb-5 border-b border-gray-200 pb-2">🔍 核心名词速查</h2>
+            <p class="mb-4 text-gray-600">所有名词默认收起，点击名词即可展开查看解释和生活类比，节省屏幕空间。</p>
+
+            <!-- 核心概念组 -->
+            <div class="mb-6 bg-white rounded-lg shadow-sm overflow-hidden">
+                <h3 class="text-lg font-semibold p-4 bg-gray-50 border-b">核心概念</h3>
+                <div class="accordion-group">
+                    <!-- Vibe Coding -->
+                    <div class="accordion-item border-b last:border-b-0">
+                        <button class="accordion-header w-full flex items-center justify-between p-4 text-left hover:bg-gray-50 transition-colors">
+                            <span class="font-medium text-lg">Vibe Coding</span>
+                            <svg class="accordion-arrow w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </button>
+                        <div class="accordion-content max-h-0">
+                            <div class="p-4 pt-0">
+                                <p class="mb-3">用自然语言（人话）跟 AI 对话来写代码。你描述想要什么，AI 帮你实现，你不需要自己手写大量代码。</p>
+                                <div class="bg-light rounded-md p-3 text-gray-700">
+                                    <span class="font-medium">💡 生活类比：</span>就像你对装修工人说：我想要一个开放式厨房，中间放一个大岛台——你不需要自己动手，但你得知道自己要什么。
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- MVP -->
+                    <div class="accordion-item border-b last:border-b-0">
+                        <button class="accordion-header w-full flex items-center justify-between p-4 text-left hover:bg-gray-50 transition-colors">
+                            <span class="font-medium text-lg">MVP（最小可用版本）</span>
+                            <svg class="accordion-arrow w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </button>
+                        <div class="accordion-content max-h-0">
+                            <div class="p-4 pt-0">
+                                <p class="mb-3">Minimum Viable Product 的缩写。只做最核心的一个功能，先能用，再慢慢加功能，避免一开始就投入太多时间。</p>
+                                <div class="bg-light rounded-md p-3 text-gray-700">
+                                    <span class="font-medium">💡 生活类比：</span>想开奶茶店，MVP 是先在街边摆个小推车卖最畅销的一款，而不是一开始就装修门店、开发会员系统。先验证需求，再投入。
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- LLM 大模型 -->
+                    <div class="accordion-item border-b last:border-b-0">
+                        <button class="accordion-header w-full flex items-center justify-between p-4 text-left hover:bg-gray-50 transition-colors">
+                            <span class="font-medium text-lg">LLM / 大模型</span>
+                            <svg class="accordion-arrow w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </button>
+                        <div class="accordion-content max-h-0">
+                            <div class="p-4 pt-0">
+                                <p class="mb-3">就是现在帮我们写代码的 AI 基础，通过学习海量公开的文字和代码训练出来的大型人工智能模型。</p>
+                                <div class="bg-light rounded-md p-3 text-gray-700">
+                                    <span class="font-medium">💡 生活类比：</span>就像一个读了全世界所有公开书籍和代码的超级实习生，你问什么他都能大概答出来，但是偶尔也会记错。
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Token -->
+                    <div class="accordion-item border-b last:border-b-0">
+                        <button class="accordion-header w-full flex items-center justify-between p-4 text-left hover:bg-gray-50 transition-colors">
+                            <span class="font-medium text-lg">Token</span>
+                            <svg class="accordion-arrow w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </button>
+                        <div class="accordion-content max-h-0">
+                            <div class="p-4 pt-0">
+                                <p class="mb-3">大模型对文字的计数单位，1 Token 大约等于 0.7 个汉字，大模型每次能处理的总长度就是 Token 数量上限。</p>
+                                <div class="bg-light rounded-md p-3 text-gray-700">
+                                    <span class="font-medium">💡 生活类比：</span>就像快递包裹的重量单位，快递有最大限重，超过限重就没法一次性寄出，必须拆分。
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 上下文窗口 -->
+                    <div class="accordion-item border-b last:border-b-0">
+                        <button class="accordion-header w-full flex items-center justify-between p-4 text-left hover:bg-gray-50 transition-colors">
+                            <span class="font-medium text-lg">上下文窗口</span>
+                            <svg class="accordion-arrow w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </button>
+                        <div class="accordion-content max-h-0">
+                            <div class="p-4 pt-0">
+                                <p class="mb-3">大模型一次能记住的对话/内容最大长度，超过这个长度，AI 就会忘记前面说过的内容。</p>
+                                <div class="bg-light rounded-md p-3 text-gray-700">
+                                    <span class="font-medium">💡 生活类比：</span>就像人的短期记忆，普通人一次只能记住 7 个左右的电话号码，太长了就记不住，大模型也是一样。
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Agent -->
+                    <div class="accordion-item border-b last:border-b-0">
+                        <button class="accordion-header w-full flex items-center justify-between p-4 text-left hover:bg-gray-50 transition-colors">
+                            <span class="font-medium text-lg">Agent / 智能体</span>
+                            <svg class="accordion-arrow w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </button>
+                        <div class="accordion-content max-h-0">
+                            <div class="p-4 pt-0">
+                                <p class="mb-3">给 AI 设定的专属角色和工作流程，让 AI 专门负责某一类任务，比通用 AI 做得更好。</p>
+                                <div class="bg-light rounded-md p-3 text-gray-700">
+                                    <span class="font-medium">💡 生活类比：</span>Agent 像是你雇的专职顾问，比如专门帮你审代码的技术顾问，专门帮你改文案的文案顾问，术业有专攻。
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Plan Mode -->
+                    <div class="accordion-item border-b last:border-b-0">
+                        <button class="accordion-header w-full flex items-center justify-between p-4 text-left hover:bg-gray-50 transition-colors">
+                            <span class="font-medium text-lg">Plan Mode（计划模式）</span>
+                            <svg class="accordion-arrow w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </button>
+                        <div class="accordion-content max-h-0">
+                            <div class="p-4 pt-0">
+                                <p class="mb-3">先让 AI 列出执行步骤，你确认没问题再让它动手写代码，避免理解偏差导致返工。</p>
+                                <div class="bg-light rounded-md p-3 text-gray-700">
+                                    <span class="font-medium">💡 生活类比：</span>装修前先看效果图，认可了再开工。而不是直接让工人装修，收房时才发现风格完全不对。
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- README -->
+                    <div class="accordion-item border-b last:border-b-0">
+                        <button class="accordion-header w-full flex items-center justify-between p-4 text-left hover:bg-gray-50 transition-colors">
+                            <span class="font-medium text-lg">README / 项目说明书</span>
+                            <svg class="accordion-arrow w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </button>
+                        <div class="accordion-content max-h-0">
+                            <div class="p-4 pt-0">
+                                <p class="mb-3">一个文本文件，记录这个项目是做什么的、给谁用、用了什么技术，每次开新对话都靠它让 AI 快速了解项目。</p>
+                                <div class="bg-light rounded-md p-3 text-gray-700">
+                                    <span class="font-medium">💡 生活类比：</span>相当于给新来同事写的岗位说明书。换一个同事（开新对话），把说明书递过去，他立刻知道要做什么。
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 开发基础组 -->
+            <div class="mb-6 bg-white rounded-lg shadow-sm overflow-hidden">
+                <h3 class="text-lg font-semibold p-4 bg-gray-50 border-b">开发基础</h3>
+                <div class="accordion-group">
+                    <!-- 前端 / 后端 -->
+                    <div class="accordion-item border-b last:border-b-0">
+                        <button class="accordion-header w-full flex items-center justify-between p-4 text-left hover:bg-gray-50 transition-colors">
+                            <span class="font-medium text-lg">前端 / 后端</span>
+                            <svg class="accordion-arrow w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </button>
+                        <div class="accordion-content max-h-0">
+                            <div class="p-4 pt-0">
+                                <p class="mb-3">前端：用户能看到和操作的部分，比如界面、按钮、颜色、动画。后端：看不见的部分，负责处理数据和逻辑。</p>
+                                <div class="bg-light rounded-md p-3 text-gray-700">
+                                    <span class="font-medium">💡 生活类比：</span>餐厅里，菜单和座位是前端；后厨做菜、算账是后端。顾客只看到前端，但好不好吃、能不能上菜取决于后端。
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- HTML/CSS/JS -->
+                    <div class="accordion-item border-b last:border-b-0">
+                        <button class="accordion-header w-full flex items-center justify-between p-4 text-left hover:bg-gray-50 transition-colors">
+                            <span class="font-medium text-lg">HTML/CSS/JavaScript</span>
+                            <svg class="accordion-arrow w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </button>
+                        <div class="accordion-content max-h-0">
+                            <div class="p-4 pt-0">
+                                <p class="mb-3">构建网页的三个基础技术，分别负责结构、样式、交互。</p>
+                                <div class="bg-light rounded-md p-3 text-gray-700">
+                                    <span class="font-medium">💡 生活类比：</span>HTML是房子的钢筋水泥骨架，决定哪里是客厅哪里是卧室；CSS是装修刷漆贴砖，决定墙面颜色、地板样式；JS是水电电器开关，让灯能亮、水龙头能出水。
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- API -->
+                    <div class="accordion-item border-b last:border-b-0">
+                        <button class="accordion-header w-full flex items-center justify-between p-4 text-left hover:bg-gray-50 transition-colors">
+                            <span class="font-medium text-lg">API（接口）</span>
+                            <svg class="accordion-arrow w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </button>
+                        <div class="accordion-content max-h-0">
+                            <div class="p-4 pt-0">
+                                <p class="mb-3">两个软件之间的沟通通道，你的软件可以通过 API 向别的软件要数据或者让它帮你做事情。</p>
+                                <div class="bg-light rounded-md p-3 text-gray-700">
+                                    <span class="font-medium">💡 生活类比：</span>就像餐厅的服务员，你给服务员说你要吃什么，服务员传给后厨，再把菜给你端过来，API就是那个服务员。
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- REST API -->
+                    <div class="accordion-item border-b last:border-b-0">
+                        <button class="accordion-header w-full flex items-center justify-between p-4 text-left hover:bg-gray-50 transition-colors">
+                            <span class="font-medium text-lg">REST API</span>
+                            <svg class="accordion-arrow w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </button>
+                        <div class="accordion-content max-h-0">
+                            <div class="p-4 pt-0">
+                                <p class="mb-3">目前最通用的 API 设计规范，大家都按同一个规则做，不同软件之间沟通就不会出错。</p>
+                                <div class="bg-light rounded-md p-3 text-gray-700">
+                                    <span class="font-medium">💡 生活类比：</span>就像邮政的快递标准，大家都用统一大小的信封、统一格式的地址，快递员送信就不会错。
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 数据库 -->
+                    <div class="accordion-item border-b last:border-b-0">
+                        <button class="accordion-header w-full flex items-center justify-between p-4 text-left hover:bg-gray-50 transition-colors">
+                            <span class="font-medium text-lg">数据库</span>
+                            <svg class="accordion-arrow w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </button>
+                        <div class="accordion-content max-h-0">
+                            <div class="p-4 pt-0">
+                                <p class="mb-3">专门存放数据的地方，用户账号、提交的内容、历史记录这些数据都存在数据库里，支持快速查询和修改。</p>
+                                <div class="bg-light rounded-md p-3 text-gray-700">
+                                    <span class="font-medium">💡 生活类比：</span>就是一个超级强大的 Excel 表格，可以存几十万行数据，并且支持多人同时快速修改和查询。
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- 工具与流程组 -->
+            <div class="mb-6 bg-white rounded-lg shadow-sm overflow-hidden">
+                <h3 class="text-lg font-semibold p-4 bg-gray-50 border-b">工具与流程</h3>
+                <div class="accordion-group">
+                    <!-- Git -->
+                    <div class="accordion-item border-b last:border-b-0">
+                        <button class="accordion-header w-full flex items-center justify-between p-4 text-left hover:bg-gray-50 transition-colors">
+                            <span class="font-medium text-lg">Git（版本控制）</span>
+                            <svg class="accordion-arrow w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </button>
+                        <div class="accordion-content max-h-0">
+                            <div class="p-4 pt-0">
+                                <p class="mb-3">给代码拍快照的系统，每次改动都有完整记录，出了问题可以随时回到任意一个历史版本。</p>
+                                <div class="bg-light rounded-md p-3 text-gray-700">
+                                    <span class="font-medium">💡 生活类比：</span>就像 Word 的修订模式加上版本历史的超级增强版，你随时可以看到谁、在什么时候、改了什么，不对了随时撤销回去。
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 依赖 -->
+                    <div class="accordion-item border-b last:border-b-0">
+                        <button class="accordion-header w-full flex items-center justify-between p-4 text-left hover:bg-gray-50 transition-colors">
+                            <span class="font-medium text-lg">依赖（Dependency）</span>
+                            <svg class="accordion-arrow w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </button>
+                        <div class="accordion-content max-h-0">
+                            <div class="p-4 pt-0">
+                                <p class="mb-3">你的项目需要用到别人写好的现成代码才能运行，这些代码就是你的项目依赖。</p>
+                                <div class="bg-light rounded-md p-3 text-gray-700">
+                                    <span class="font-medium">💡 生活类比：</span>就像你做蛋糕需要面粉、鸡蛋、黄油，这些原材料就是你做蛋糕的依赖，你不用自己种麦子养鸡，买来直接用就行。
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- npm/pip -->
+                    <div class="accordion-item border-b last:border-b-0">
+                        <button class="accordion-header w-full flex items-center justify-between p-4 text-left hover:bg-gray-50 transition-colors">
+                            <span class="font-medium text-lg">npm / pip / 包管理器</span>
+                            <svg class="accordion-arrow w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </button>
+                        <div class="accordion-content max-h-0">
+                            <div class="p-4 pt-0">
+                                <p class="mb-3">帮你自动下载、安装、更新项目依赖的工具，不用你自己找依赖、手动放到正确位置。</p>
+                                <div class="bg-light rounded-md p-3 text-gray-700">
+                                    <span class="font-medium">💡 生活类比：</span>就是你手机上的外卖APP，你说你要什么原材料，它帮你找正品、送到家门口，不用你自己跑市场买。
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 环境变量 -->
+                    <div class="accordion-item border-b last:border-b-0">
+                        <button class="accordion-header w-full flex items-center justify-between p-4 text-left hover:bg-gray-50 transition-colors">
+                            <span class="font-medium text-lg">环境变量</span>
+                            <svg class="accordion-arrow w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </button>
+                        <div class="accordion-content max-h-0">
+                            <div class="p-4 pt-0">
+                                <p class="mb-3">存放在代码外面的敏感信息，比如 API 密钥、数据库密码，不会写在代码里，避免泄露。</p>
+                                <div class="bg-light rounded-md p-3 text-gray-700">
+                                    <span class="font-medium">💡 生活类比：</span>就像你家门的密码，你不会写在大门上告诉所有人，只偷偷告诉家里需要开门的人，外人看不到。
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 跨域 -->
+                    <div class="accordion-item border-b last:border-b-0">
+                        <button class="accordion-header w-full flex items-center justify-between p-4 text-left hover:bg-gray-50 transition-colors">
+                            <span class="font-medium text-lg">跨域</span>
+                            <svg class="accordion-arrow w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </button>
+                        <div class="accordion-content max-h-0">
+                            <div class="p-4 pt-0">
+                                <p class="mb-3">浏览器的安全规则，默认不让网页随便访问别的网站的数据，避免信息泄露。</p>
+                                <div class="bg-light rounded-md p-3 text-gray-700">
+                                    <span class="font-medium">💡 生活类比：</span>就像小区的门禁，不是本小区的车不能随便进，是为了保护小区住户的安全。
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 本地运行 -->
+                    <div class="accordion-item border-b last:border-b-0">
+                        <button class="accordion-header w-full flex items-center justify-between p-4 text-left hover:bg-gray-50 transition-colors">
+                            <span class="font-medium text-lg">本地运行</span>
+                            <svg class="accordion-arrow w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </button>
+                        <div class="accordion-content max-h-0">
+                            <div class="p-4 pt-0">
+                                <p class="mb-3">在你自己的电脑上运行代码，只有你自己能看到，别人访问不到。</p>
+                                <div class="bg-light rounded-md p-3 text-gray-700">
+                                    <span class="font-medium">💡 生活类比：</span>就是你在自己家厨房做菜，做好了只有你自己能尝，还没端出去给客人吃。
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 部署上线组 -->
+            <div class="mb-6 bg-white rounded-lg shadow-sm overflow-hidden">
+                <h3 class="text-lg font-semibold p-4 bg-gray-50 border-b">部署与上线</h3>
+                <div class="accordion-group">
+                    <!-- 部署 -->
+                    <div class="accordion-item border-b last:border-b-0">
+                        <button class="accordion-header w-full flex items-center justify-between p-4 text-left hover:bg-gray-50 transition-colors">
+                            <span class="font-medium text-lg">部署（Deploy）</span>
+                            <svg class="accordion-arrow w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </button>
+                        <div class="accordion-content max-h-0">
+                            <div class="p-4 pt-0">
+                                <p class="mb-3">把写好的代码放到公共服务器上，让其他人可以通过网络访问到你的产品。</p>
+                                <div class="bg-light rounded-md p-3 text-gray-700">
+                                    <span class="font-medium">💡 生活类比：</span>就是你把做好的菜端到餐桌上，客人才能过来吃。
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 域名 -->
+                    <div class="accordion-item border-b last:border-b-0">
+                        <button class="accordion-header w-full flex items-center justify-between p-4 text-left hover:bg-gray-50 transition-colors">
+                            <span class="font-medium text-lg">域名</span>
+                            <svg class="accordion-arrow w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </button>
+                        <div class="accordion-content max-h-0">
+                            <div class="p-4 pt-0">
+                                <p class="mb-3">别人访问你网站用的好记地址，比如 baidu.com，就是域名。</p>
+                                <div class="bg-light rounded-md p-3 text-gray-700">
+                                    <span class="font-medium">💡 生活类比：</span>就像你家的门牌号，别人根据门牌号才能找到你家。
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 托管 -->
+                    <div class="accordion-item border-b last:border-b-0">
+                        <button class="accordion-header w-full flex items-center justify-between p-4 text-left hover:bg-gray-50 transition-colors">
+                            <span class="font-medium text-lg">托管 / 服务器</span>
+                            <svg class="accordion-arrow w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </button>
+                        <div class="accordion-content max-h-0">
+                            <div class="p-4 pt-0">
+                                <p class="mb-3">帮你存放网站代码、让别人能24小时访问你的产品的公共电脑，一般是按流量收费。</p>
+                                <div class="bg-light rounded-md p-3 text-gray-700">
+                                    <span class="font-medium">💡 生活类比：</span>就是你租的商铺位置，你开店需要租个地方放你的商品，客人才能来消费。
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 常用工具速查 -->
+            <div class="mt-8">
+                <h3 class="text-xl font-semibold mb-3">常用工具速查</h3>
+                <div class="overflow-x-auto bg-white rounded-lg shadow-sm">
+                    <table class="w-full text-left">
+                        <thead class="bg-gray-100 border-b">
+                            <tr>
+                                <th class="p-3 font-semibold">工具</th>
+                                <th class="p-3 font-semibold">适合做什么 / 难度</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="border-b">
+                                <td class="p-3">Claude.ai / Gemini 网页对话</td>
+                                <td class="p-3">生成脚本、梳理逻辑、规划项目  ⭐</td>
+                            </tr>
+                            <tr class="border-b">
+                                <td class="p-3">Cursor</td>
+                                <td class="p-3">写完整项目，AI 辅助写代码  ⭐⭐</td>
+                            </tr>
+                            <tr class="border-b">
+                                <td class="p-3">Replit</td>
+                                <td class="p-3">一键运行代码，不用自己配置环境  ⭐⭐</td>
+                            </tr>
+                            <tr class="border-b">
+                                <td class="p-3">v0.dev</td>
+                                <td class="p-3">直接用文字生成网页界面  ⭐⭐</td>
+                            </tr>
+                            <tr>
+                                <td class="p-3">Bubble / Webflow</td>
+                                <td class="p-3">拖拽做产品，基本不用写代码  ⭐⭐</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- 第三部分：全流程 -->
+        <section class="mb-8" id="process">
+            <h2 class="text-2xl font-bold text-primary mb-5 border-b border-gray-200 pb-2">📝 Vibe Coding 标准全流程</h2>
+            <p class="mb-4 text-gray-600">做任何产品，都按这五步走，不容易出错。</p>
+            <div class="bg-white rounded-lg shadow-sm p-5">
+                <ol class="list-decimal pl-5 space-y-3">
+                    <li class="text-lg"><span class="font-medium">① 验证想法：</span>先让 AI 帮你评估复杂度，定最小可用版本 → 避免一开始就做太复杂的东西</li>
+                    <li class="text-lg"><span class="font-medium">② 写说明书：</span>生成项目背景文档，每次新对话直接用 → AI 永远不会忘背景</li>
+                    <li class="text-lg"><span class="font-medium">③ 定结构：</span>先规划整体框架，确认没问题再动手 → 避免写到一半推翻重来</li>
+                    <li class="text-lg"><span class="font-medium">④ 分步执行：</span>先出计划，一次只做一步，做完确认再继续 → 少返工</li>
+                    <li class="text-lg"><span class="font-medium">⑤ 沉淀复用：</span>把好用的流程和提示词存成模板 → 越做越快</li>
+                </ol>
+            </div>
+        </section>
+
+        <!-- 第四部分：提示词模板 -->
+        <section class="mb-8" id="prompts">
+            <h2 class="text-2xl font-bold text-primary mb-5 border-b border-gray-200 pb-2">🚀 全流程可复用提示词模板</h2>
+            <p class="mb-4 text-gray-600">以下每条提示词都可以点击按钮一键复制，替换【方括号内容】即可使用。</p>
+
+            <!-- 第零步 -->
+            <div class="mb-6">
+                <h3 class="text-xl font-semibold mb-3">第零步：验证想法，定 MVP</h3>
+                <div class="bg-blue-50 rounded-lg p-4 mb-4 text-gray-700">
+                    💡 为什么先做这步？很多人一上来就让 AI 写代码，做到一半发现方向错了。这步相当于动工前先画草图，确认方向对了再投入时间。
+                </div>
+
+                <!-- 提示词0-A -->
+                <div class="bg-white rounded-lg shadow-sm mb-4 overflow-hidden">
+                    <div class="p-3 bg-gray-100 font-medium border-b">提示词 0-A：验证想法复杂度</div>
+                    <div class="p-4 relative">
+                        <pre class="text-sm md:text-base leading-relaxed" data-copyable>我有一个产品想法：【用一两句话描述你的想法】
 
 我没有编程背景。请帮我：
 1. 用简单的话告诉我这个想法的复杂度（简单/中等/复杂）
@@ -180,27 +581,41 @@
 3. 推荐最适合我用的工具
 4. 告诉我第一步应该做什么
 
-请用非技术人员能理解的语言回答。</div>
-                <button class="copy-btn" onclick="copyText('p0a', this)">一键复制</button>
-            </div>
+请用非技术人员能理解的语言回答。</pre>
+                        <button class="copy-btn mt-2 px-3 py-1 bg-primary text-white rounded hover:bg-primary/90 transition-colors float-right">复制内容</button>
+                        <div class="clear-both"></div>
+                    </div>
+                </div>
 
-            <div class="card prompt-card">
-                <div class="prompt-title">0-B：缩小范围，定 MVP <span class="tag">第0步</span></div>
-                <div class="prompt-text" id="p0b">我想做【你的想法】，但我是新手，时间和能力有限。
+                <!-- 提示词0-B -->
+                <div class="bg-white rounded-lg shadow-sm mb-4 overflow-hidden">
+                    <div class="p-3 bg-gray-100 font-medium border-b">提示词 0-B：缩小范围，定 MVP</div>
+                    <div class="p-4 relative">
+                        <pre class="text-sm md:text-base leading-relaxed" data-copyable>我想做【你的想法】，但我是新手，时间和能力有限。
 
 请帮我设计一个最小可用版本（MVP）：
 - 只保留最核心的一个功能
 - 其他功能列成以后可以加的清单
 - 告诉我这个最小版本大概需要多久能做出来
 
-MVP 是什么意思也请顺带解释一下。</div>
-                <button class="copy-btn" onclick="copyText('p0b', this)">一键复制</button>
+MVP 是什么意思也请顺带解释一下。</pre>
+                        <button class="copy-btn mt-2 px-3 py-1 bg-primary text-white rounded hover:bg-primary/90 transition-colors float-right">复制内容</button>
+                        <div class="clear-both"></div>
+                    </div>
+                </div>
             </div>
 
-            <div class="card prompt-card">
-                <div class="prompt-title">1-A：生成项目说明书 <span class="tag">第1步</span></div>
-                <div class="prompt-reason">解决 AI 没有跨对话记忆的问题。</div>
-                <div class="prompt-text" id="p1a">请帮我写一份项目说明书，我之后每次开始新对话都会把它粘贴给 AI 看。
+            <!-- 第一步 -->
+            <div class="mb-6">
+                <h3 class="text-xl font-semibold mb-3">第一步：写项目说明书</h3>
+                <div class="bg-blue-50 rounded-lg p-4 mb-4 text-gray-700">
+                    💡 为什么先做这步？AI 没有跨对话的记忆。这份说明书让你每次开新对话时，AI 能快速进入状态，不用反复解释背景。
+                </div>
+
+                <div class="bg-white rounded-lg shadow-sm mb-4 overflow-hidden">
+                    <div class="p-3 bg-gray-100 font-medium border-b">提示词 1-A：生成项目说明书</div>
+                    <div class="p-4 relative">
+                        <pre class="text-sm md:text-base leading-relaxed" data-copyable>请帮我写一份项目说明书，我之后每次开始新对话都会把它粘贴给 AI 看。
 
 我的产品叫：【名字】
 要解决的问题：【描述】
@@ -208,23 +623,36 @@ MVP 是什么意思也请顺带解释一下。</div>
 核心功能：【列出 2-3 个】
 我打算用的工具：【比如 Claude.ai，或者还不确定也可以写不确定】
 
-请把说明书写得简洁，让 AI 一眼就能理解这个项目。</div>
-                <button class="copy-btn" onclick="copyText('p1a', this)">一键复制</button>
-            </div>
+请把说明书写得简洁，让 AI 一眼就能理解这个项目。</pre>
+                        <button class="copy-btn mt-2 px-3 py-1 bg-primary text-white rounded hover:bg-primary/90 transition-colors float-right">复制内容</button>
+                        <div class="clear-both"></div>
+                    </div>
+                </div>
 
-            <div class="card prompt-card">
-                <div class="prompt-title">1-B：每次新对话开头用这个 <span class="tag">第1步</span></div>
-                <div class="prompt-text" id="p1b">【粘贴你的项目说明书】
+                <div class="bg-white rounded-lg shadow-sm mb-4 overflow-hidden">
+                    <div class="p-3 bg-gray-100 font-medium border-b">提示词 1-B：每次新对话开头用这个</div>
+                    <div class="p-4 relative">
+                        <pre class="text-sm md:text-base leading-relaxed" data-copyable>【粘贴你的项目说明书】
 
 以上是我的项目背景。今天我想继续做【具体任务】。
-请先告诉我你理解的项目概况，确认我们在同一个方向上，再开始。</div>
-                <button class="copy-btn" onclick="copyText('p1b', this)">一键复制</button>
+请先告诉我你理解的项目概况，确认我们在同一个方向上，再开始。</pre>
+                        <button class="copy-btn mt-2 px-3 py-1 bg-primary text-white rounded hover:bg-primary/90 transition-colors float-right">复制内容</button>
+                        <div class="clear-both"></div>
+                    </div>
+                </div>
             </div>
 
-            <div class="card prompt-card">
-                <div class="prompt-title">2-A：让 AI 帮你规划结构 <span class="tag">第2步</span></div>
-                <div class="prompt-reason">先列大纲，逻辑清楚了代码才不会跑偏。</div>
-                <div class="prompt-text" id="p2a">我要做【产品名称】，核心功能是【描述】。
+            <!-- 第二步 -->
+            <div class="mb-6">
+                <h3 class="text-xl font-semibold mb-3">第二步：规划产品结构</h3>
+                <div class="bg-blue-50 rounded-lg p-4 mb-4 text-gray-700">
+                    💡 为什么先做这步？跳过这步直接让 AI 写，它会自己做很多决定，后面越改越乱。先列大纲再写内容，逻辑更清楚。
+                </div>
+
+                <div class="bg-white rounded-lg shadow-sm mb-4 overflow-hidden">
+                    <div class="p-3 bg-gray-100 font-medium border-b">提示词 2-A：让 AI 帮你规划结构</div>
+                    <div class="p-4 relative">
+                        <pre class="text-sm md:text-base leading-relaxed" data-copyable>我要做【产品名称】，核心功能是【描述】。
 
 请帮我规划这个产品的整体结构：
 1. 用户会看到哪些页面或界面？
@@ -232,14 +660,37 @@ MVP 是什么意思也请顺带解释一下。</div>
 3. 数据存在哪里？（比如用户信息、内容记录）
 4. 有没有需要连接外部服务的地方？（比如发邮件、地图、付款）
 
-请用类比或图示的方式解释，不要直接给我写代码。</div>
-                <button class="copy-btn" onclick="copyText('p2a', this)">一键复制</button>
+请用类比或图示的方式解释，不要直接给我写代码。</pre>
+                        <button class="copy-btn mt-2 px-3 py-1 bg-primary text-white rounded hover:bg-primary/90 transition-colors float-right">复制内容</button>
+                        <div class="clear-both"></div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-sm mb-4 overflow-hidden">
+                    <div class="p-3 bg-gray-100 font-medium border-b">提示词 2-B：不懂就问，确认结构</div>
+                    <div class="p-4 relative">
+                        <pre class="text-sm md:text-base leading-relaxed" data-copyable>你刚才说的结构我有几个地方不太理解：
+【把你不懂的部分列出来】
+
+请用生活中的例子来解释这些概念。
+解释完之后问我：这个结构你满意吗？有没有我没提到但你觉得重要的功能？</pre>
+                        <button class="copy-btn mt-2 px-3 py-1 bg-primary text-white rounded hover:bg-primary/90 transition-colors float-right">复制内容</button>
+                        <div class="clear-both"></div>
+                    </div>
+                </div>
             </div>
 
-            <div class="card prompt-card">
-                <div class="prompt-title">3-A：先出计划再动手 <span class="tag">第3步</span></div>
-                <div class="prompt-reason">Plan Mode：避免 AI 理解偏差导致大量返工。</div>
-                <div class="prompt-text" id="p3a">我现在要实现这个功能：【描述具体功能】
+            <!-- 第三步 -->
+            <div class="mb-6">
+                <h3 class="text-xl font-semibold mb-3">第三步：分步执行（计划模式）</h3>
+                <div class="bg-blue-50 rounded-lg p-4 mb-4 text-gray-700">
+                    💡 核心原则：永远先要计划，再要执行。这一个习惯能帮你避免 80% 的返工。
+                </div>
+
+                <div class="bg-white rounded-lg shadow-sm mb-4 overflow-hidden">
+                    <div class="p-3 bg-gray-100 font-medium border-b">提示词 3-A：先出计划再动手</div>
+                    <div class="p-4 relative">
+                        <pre class="text-sm md:text-base leading-relaxed" data-copyable>我现在要实现这个功能：【描述具体功能】
 
 请先不要写代码。先告诉我：
 1. 你打算怎么做？（步骤清单）
@@ -247,13 +698,16 @@ MVP 是什么意思也请顺带解释一下。</div>
 3. 有没有我需要提前准备的东西？
 4. 可能遇到什么问题？
 
-我确认计划没问题之后，再请你动手。</div>
-                <button class="copy-btn" onclick="copyText('p3a', this)">一键复制</button>
-            </div>
+我确认计划没问题之后，再请你动手。</pre>
+                        <button class="copy-btn mt-2 px-3 py-1 bg-primary text-white rounded hover:bg-primary/90 transition-colors float-right">复制内容</button>
+                        <div class="clear-both"></div>
+                    </div>
+                </div>
 
-            <div class="card prompt-card">
-                <div class="prompt-title">3-B：分步执行，一次一步 <span class="tag">第3步</span></div>
-                <div class="prompt-text" id="p3b">计划我看过了，没问题。
+                <div class="bg-white rounded-lg shadow-sm mb-4 overflow-hidden">
+                    <div class="p-3 bg-gray-100 font-medium border-b">提示词 3-B：分步执行，一次一步</div>
+                    <div class="p-4 relative">
+                        <pre class="text-sm md:text-base leading-relaxed" data-copyable>计划我看过了，没问题。
 
 请先只做第一步：【复述计划的第一步】
 做完之后告诉我：
@@ -261,197 +715,243 @@ MVP 是什么意思也请顺带解释一下。</div>
 - 我需要怎么验证它是否成功
 - 下一步是什么
 
-一次只做一步，做完等我确认再继续。</div>
-                <button class="copy-btn" onclick="copyText('p3b', this)">一键复制</button>
+一次只做一步，做完等我确认再继续。</pre>
+                        <button class="copy-btn mt-2 px-3 py-1 bg-primary text-white rounded hover:bg-primary/90 transition-colors float-right">复制内容</button>
+                        <div class="clear-both"></div>
+                    </div>
+                </div>
             </div>
 
-            <div class="card prompt-card">
-                <div class="prompt-title">4-A：报错 / 出问题时用这个 <span class="tag">第4步</span></div>
-                <div class="prompt-text" id="p4a">出问题了，我来描述一下情况：
+            <!-- 第四步 -->
+            <div class="mb-6">
+                <h3 class="text-xl font-semibold mb-3">第四步：出问题时怎么问</h3>
+                <div class="bg-blue-50 rounded-lg p-4 mb-4 text-gray-700">
+                    💡 清晰的问题描述能让 AI 快速定位问题，节省大量来回沟通的时间。
+                </div>
+
+                <div class="bg-white rounded-lg shadow-sm mb-4 overflow-hidden">
+                    <div class="p-3 bg-gray-100 font-medium border-b">提示词 4-A：报错 / 出问题时用这个</div>
+                    <div class="p-4 relative">
+                        <pre class="text-sm md:text-base leading-relaxed" data-copyable>出问题了，我来描述一下情况：
 
 【我做了什么操作】
 【出现了什么现象，或者看到了什么错误信息——截图或复制粘贴过来】
 【我期望它应该怎样】
 
 请先解释这个问题是什么原因，然后给我最简单的解决方法。
-如果有多种解决方法，告诉我哪种最适合新手。</div>
-                <button class="copy-btn" onclick="copyText('p4a', this)">一键复制</button>
+如果有多种解决方法，告诉我哪种最适合新手。</pre>
+                        <button class="copy-btn mt-2 px-3 py-1 bg-primary text-white rounded hover:bg-primary/90 transition-colors float-right">复制内容</button>
+                        <div class="clear-both"></div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-sm mb-4 overflow-hidden">
+                    <div class="p-3 bg-gray-100 font-medium border-b">提示词 4-B：看不懂 AI 给的内容时</div>
+                    <div class="p-4 relative">
+                        <pre class="text-sm md:text-base leading-relaxed" data-copyable>你刚才给我的这段内容：
+【粘贴你看不懂的部分】
+
+请用逐行解释的方式给我说明，
+就像在给一个完全不懂编程的人讲解一样。
+不需要很技术，用生活比喻就好。</pre>
+                        <button class="copy-btn mt-2 px-3 py-1 bg-primary text-white rounded hover:bg-primary/90 transition-colors float-right">复制内容</button>
+                        <div class="clear-both"></div>
+                    </div>
+                </div>
             </div>
 
-            <div class="card prompt-card">
-                <div class="prompt-title">5-A：总结这次做了什么 <span class="tag">第5步</span></div>
-                <div class="prompt-text" id="p5a">我们今天完成了【功能名称】。
+            <!-- 第五步 -->
+            <div class="mb-6">
+                <h3 class="text-xl font-semibold mb-3">第五步：沉淀和复用</h3>
+                <div class="bg-blue-50 rounded-lg p-4 mb-4 text-gray-700">
+                    💡 做完一个功能后，把经验记下来，下次可以直接复用，你的个人知识库会越来越强。
+                </div>
+
+                <div class="bg-white rounded-lg shadow-sm mb-4 overflow-hidden">
+                    <div class="p-3 bg-gray-100 font-medium border-b">提示词 5-A：总结这次做了什么</div>
+                    <div class="p-4 relative">
+                        <pre class="text-sm md:text-base leading-relaxed" data-copyable>我们今天完成了【功能名称】。
 
 请帮我写一份简短的总结，包括：
 1. 做了什么（一句话）
 2. 用到了哪些工具或技术（用大白话解释）
 3. 下次遇到类似需求，我应该怎么开始
 
-我要把这份总结存起来备用。</div>
-                <button class="copy-btn" onclick="copyText('p5a', this)">一键复制</button>
-            </div>
+我要把这份总结存起来备用。</pre>
+                        <button class="copy-btn mt-2 px-3 py-1 bg-primary text-white rounded hover:bg-primary/90 transition-colors float-right">复制内容</button>
+                        <div class="clear-both"></div>
+                    </div>
+                </div>
 
-            <h2>🌟 万能提示词</h2>
-            <div class="card prompt-card">
-                <div class="prompt-title">遇到不懂的概念时</div>
-                <div class="prompt-text" id="p_concept">我刚接触到一个词：【概念名词】
+                <div class="bg-white rounded-lg shadow-sm mb-4 overflow-hidden">
+                    <div class="p-3 bg-gray-100 font-medium border-b">提示词 5-B：提炼可复用模板</div>
+                    <div class="p-4 relative">
+                        <pre class="text-sm md:text-base leading-relaxed" data-copyable>我们刚才的对话流程对我很有帮助。
+
+请帮我把如何让你帮我做【这类任务】提炼成一个可复用的提示词模板，
+让我下次遇到类似需求时直接套用，不需要重新想怎么问你。</pre>
+                        <button class="copy-btn mt-2 px-3 py-1 bg-primary text-white rounded hover:bg-primary/90 transition-colors float-right">复制内容</button>
+                        <div class="clear-both"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 第五部分：万能提示词 -->
+        <section class="mb-8" id="qa">
+            <h2 class="text-2xl font-bold text-primary mb-5 border-b border-gray-200 pb-2">💡 万能提问模板</h2>
+            <p class="mb-4 text-gray-600">任何场景下都可以直接用这些模板提问。</p>
+
+            <div class="bg-white rounded-lg shadow-sm mb-4 overflow-hidden">
+                <div class="p-3 bg-gray-100 font-medium border-b">遇到不懂的概念时</div>
+                <div class="p-4 relative">
+                    <pre class="text-sm md:text-base leading-relaxed" data-copyable>我刚接触到一个词：【概念名词】
 
 请用以下方式解释给我听：
 1. 一句话定义
 2. 生活中的类比
 3. 在我做的产品里，它具体指什么
-4. 我需要学到什么程度才够用？（新手够用级别就好）</div>
-                <button class="copy-btn" onclick="copyText('p_concept', this)">一键复制</button>
+4. 我需要学到什么程度才够用？（新手够用级别就好）</pre>
+                    <button class="copy-btn mt-2 px-3 py-1 bg-primary text-white rounded hover:bg-primary/90 transition-colors float-right">复制内容</button>
+                    <div class="clear-both"></div>
+                </div>
             </div>
-            
-            <div class="card prompt-card">
-                <div class="prompt-title">需要 AI 扮演特定角色时</div>
-                <div class="prompt-text" id="p_role">接下来请你扮演一个【角色，比如：有经验的产品经理 / UX 设计师 / 技术顾问】
+
+            <div class="bg-white rounded-lg shadow-sm mb-4 overflow-hidden">
+                <div class="p-3 bg-gray-100 font-medium border-b">评估工作量 / 可行性时</div>
+                <div class="p-4 relative">
+                    <pre class="text-sm md:text-base leading-relaxed" data-copyable>我想加一个功能：【描述功能】
+
+请评估：
+1. 实现难度（对我这种新手来说）
+2. 大概需要多少时间
+3. 有没有更简单的替代方案能达到类似效果
+4. 推荐我现在做还是以后再加</pre>
+                    <button class="copy-btn mt-2 px-3 py-1 bg-primary text-white rounded hover:bg-primary/90 transition-colors float-right">复制内容</button>
+                    <div class="clear-both"></div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-sm mb-4 overflow-hidden">
+                <div class="p-3 bg-gray-100 font-medium border-b">需要 AI 帮你审查方案时</div>
+                <div class="p-4 relative">
+                    <pre class="text-sm md:text-base leading-relaxed" data-copyable>接下来请你扮演一个【角色，比如：有经验的产品经理 / UX 设计师 / 技术顾问】
 你的任务是帮我审查我的产品方案，找出问题和改进空间。
 
 请用对外行友好的方式沟通，遇到技术概念请用类比解释。
 
-我的方案是：【描述你的产品或功能】</div>
-                <button class="copy-btn" onclick="copyText('p_role', this)">一键复制</button>
+我的方案是：【描述你的产品或功能】</pre>
+                    <button class="copy-btn mt-2 px-3 py-1 bg-primary text-white rounded hover:bg-primary/90 transition-colors float-right">复制内容</button>
+                    <div class="clear-both"></div>
+                </div>
             </div>
         </section>
 
-        <section id="process">
-            <h2>🗺️ Vibe Coding 全流程</h2>
-            <div class="card">
-                <div class="step-item">
-                    <div class="step-num">1</div>
-                    <div class="step-content">
-                        <strong>想清楚 (验证想法 & 定最小版本)</strong>
-                        <p>先写策划书，确认方向对了再投入时间。</p>
+        <!-- 第六部分：使用建议 -->
+        <section class="mb-8" id="tips">
+            <h2 class="text-2xl font-bold text-primary mb-5 border-b border-gray-200 pb-2">✅ 新手习惯与常见误区</h2>
+
+            <div class="mb-6">
+                <h3 class="text-xl font-semibold mb-3">三个最重要的好习惯</h3>
+                <div class="bg-white rounded-lg shadow-sm p-5 space-y-3">
+                    <div class="pl-4 border-l-4 border-primary">
+                        <p class="font-medium">习惯 1：永远先要计划，再要执行</p>
+                        <p class="text-gray-600">遇到任何超过 3 步的任务，先让 AI 列计划。你认可了再说开始。这一个习惯能帮你避免 80% 的返工。</p>
                     </div>
-                </div>
-                <div class="step-item">
-                    <div class="step-num">2</div>
-                    <div class="step-content">
-                        <strong>写说明书 (让 AI 记住项目背景)</strong>
-                        <p>写工作交接文件，方便每次新对话快速进入状态。</p>
+                    <div class="pl-4 border-l-4 border-primary">
+                        <p class="font-medium">习惯 2：一次只做一件事</p>
+                        <p class="text-gray-600">不要在一条提示词里塞太多需求。做完一件，确认没问题，再做下一件。AI 处理多个指令时容易顾此失彼。</p>
                     </div>
-                </div>
-                <div class="step-item">
-                    <div class="step-num">3</div>
-                    <div class="step-content">
-                        <strong>定结构 (规划整体框架)</strong>
-                        <p>先列文章大纲再动手，避免越改越乱。</p>
-                    </div>
-                </div>
-                <div class="step-item">
-                    <div class="step-num">4</div>
-                    <div class="step-content">
-                        <strong>分步执行 (出计划，逐步确认)</strong>
-                        <p>Plan Mode：装修前看效果图，一次只做一步。</p>
-                    </div>
-                </div>
-                <div class="step-item">
-                    <div class="step-num">5</div>
-                    <div class="step-content">
-                        <strong>沉淀复用 (存成模板)</strong>
-                        <p>把好用的流程存成模板，建立个人提示词库。</p>
+                    <div class="pl-4 border-l-4 border-primary">
+                        <p class="font-medium">习惯 3：把好用的提示词存下来</p>
+                        <p class="text-gray-600">每次 AI 给了一个特别好用的回答，把那条提示词存进你的提示词库文档里。你的库会越来越强。</p>
                     </div>
                 </div>
             </div>
 
-            <h2>🛠 常用工具速查</h2>
-            <div class="card">
-                <ul style="padding-left: 20px; font-size: 14px; line-height: 2;">
-                    <li><strong>Claude.ai:</strong> 生成脚本、处理文本、规划逻辑 ⭐</li>
-                    <li><strong>Cursor:</strong> 写网页小工具，有 AI 辅助写代码 ⭐⭐</li>
-                    <li><strong>Replit:</strong> 一键运行代码，不用自己配置环境 ⭐⭐</li>
-                    <li><strong>v0.dev:</strong> 直接用文字描述生成网页界面 ⭐⭐</li>
-                    <li><strong>Bubble / Webflow:</strong> 做网页产品，基本不写代码 ⭐⭐</li>
-                </ul>
+            <div class="mb-6">
+                <h3 class="text-xl font-semibold mb-3">三个最常见的误区</h3>
+                <div class="bg-white rounded-lg shadow-sm p-5 space-y-3">
+                    <div class="pl-4 border-l-4 border-red-300">
+                        <p class="font-medium">误区 1：把 AI 当搜索引擎</p>
+                        <p class="text-gray-600">AI 擅长推理和生成，不擅长给你最新的精确事实信息。验证重要信息要去看官方原始资料。</p>
+                    </div>
+                    <div class="pl-4 border-l-4 border-red-300">
+                        <p class="font-medium">误区 2：直接说帮我做一个大产品</p>
+                        <p class="text-gray-600">需求太模糊，AI 会自己做很多假设，结果大概率不是你要的。永远先用模板验证想法，再一步步推进。</p>
+                    </div>
+                    <div class="pl-4 border-l-4 border-red-300">
+                        <p class="font-medium">误区 3：不懂就跳过，假装懂了</p>
+                        <p class="text-gray-600">遇到不懂的词，不要跳过，用万能模板问清楚，否则问题会越积越多，到最后完全推不动。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-primary/10 rounded-xl p-6 text-center">
+                <p class="text-xl font-bold text-primary">核心原则，一句话</p>
+                <p class="text-lg mt-2 leading-relaxed">你负责想清楚，AI 负责执行。<br/>做一个真正解决自己问题的小东西，比模仿别人做大产品更容易成功。</p>
             </div>
         </section>
+    </div>
 
-        <section id="concepts">
-            <h2>📖 核心名词解释</h2>
-            <div class="card" id="accordion-container">
-                </div>
-        </section>
-
-        <section id="tips">
-            <h2>💡 三个最重要的习惯</h2>
-            <div class="card">
-                <strong style="color: var(--primary);">1. 永远先要计划，再要执行</strong>
-                <p style="font-size: 14px; margin: 8px 0 16px 0;">遇到任何超过 3 步的任务，先让 AI 列计划。你认可了再说开始。这能帮你避免 80% 的返工。</p>
-
-                <strong style="color: var(--primary);">2. 一次只做一件事</strong>
-                <p style="font-size: 14px; margin: 8px 0 16px 0;">不要在一条提示词里塞太多需求。做完一件确认没问题再做下一件。AI 处理多个指令容易顾此失彼。</p>
-
-                <strong style="color: var(--primary);">3. 把好用的提示词存下来</strong>
-                <p style="font-size: 14px; margin: 8px 0 0 0;">每次 AI 给了一个特别好用的回答，把那条提示词存进你的文档里，你的库会越来越强。</p>
-            </div>
-
-            <h2>⚠️ 三个常见误区</h2>
-            <div class="card">
-                <ul style="padding-left: 20px; font-size: 14px; line-height: 2;">
-                    <li><strong>把 AI 当搜索引擎：</strong> 验证重要信息要去看原始资料。</li>
-                    <li><strong>直接说帮我做一个 App：</strong> 需求太模糊，AI 会做错误假设。先验证想法再推进。</li>
-                    <li><strong>不懂就跳过：</strong> 不要假装懂了继续往下走，用万能提示词问清楚。</li>
-                </ul>
-            </div>
-        </section>
-
-    </main>
-
+    <!-- 交互JS：手风琴折叠 + 一键复制 -->
     <script>
-        // 导航切换逻辑
-        function switchTab(tabId) {
-            document.querySelectorAll('.nav-tab').forEach(tab => tab.classList.remove('active'));
-            document.querySelectorAll('section').forEach(sec => sec.classList.remove('active'));
-            
-            event.target.classList.add('active');
-            document.getElementById(tabId).classList.add('active');
-            window.scrollTo(0, 0);
-        }
+        // 手风琴折叠逻辑
+        document.querySelectorAll('.accordion-group').forEach(group => {
+            const items = group.querySelectorAll('.accordion-item');
+            items.forEach(item => {
+                const header = item.querySelector('.accordion-header');
+                const content = item.querySelector('.accordion-content');
+                const arrow = item.querySelector('.accordion-arrow');
+
+                header.addEventListener('click', () => {
+                    // 同组关闭其他
+                    items.forEach(otherItem => {
+                        if (otherItem !== item) {
+                            otherItem.querySelector('.accordion-content').style.maxHeight = null;
+                            otherItem.querySelector('.accordion-arrow').style.transform = 'rotate(0deg)';
+                        }
+                    });
+                    // 切换当前
+                    if (content.style.maxHeight) {
+                        content.style.maxHeight = null;
+                        arrow.style.transform = 'rotate(0deg)';
+                    } else {
+                        content.style.maxHeight = content.scrollHeight + 'px';
+                        arrow.style.transform = 'rotate(180deg)';
+                    }
+                });
+            });
+        });
 
         // 一键复制逻辑
-        function copyText(elementId, btnElement) {
-            const textToCopy = document.getElementById(elementId).innerText;
-            navigator.clipboard.writeText(textToCopy).then(() => {
-                const originalText = btnElement.innerText;
-                btnElement.innerText = '✅ 已复制';
-                btnElement.classList.add('success');
-                
-                setTimeout(() => {
-                    btnElement.innerText = originalText;
-                    btnElement.classList.remove('success');
-                }, 2000);
-            }).catch(err => {
-                console.error('复制失败:', err);
-                alert('复制失败，请手动长按复制');
+        document.querySelectorAll('.copy-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const content = btn.parentElement.querySelector('[data-copyable]').textContent;
+                navigator.clipboard.writeText(content).then(() => {
+                    const originalText = btn.textContent;
+                    const originalBg = btn.classList.contains('bg-primary') ? 'bg-primary' : 'bg-green-500';
+                    btn.textContent = '复制成功！';
+                    btn.classList.remove(originalBg);
+                    btn.classList.add('bg-green-500');
+                    setTimeout(() => {
+                        btn.textContent = originalText;
+                        btn.classList.remove('bg-green-500');
+                        btn.classList.add(originalBg);
+                    }, 2000);
+                }).catch(() => {
+                    const originalText = btn.textContent;
+                    const originalBg = btn.classList.contains('bg-primary') ? 'bg-primary' : 'bg-red-500';
+                    btn.textContent = '复制失败，请手动选中复制';
+                    btn.classList.remove(originalBg);
+                    btn.classList.add('bg-red-500');
+                    setTimeout(() => {
+                        btn.textContent = originalText;
+                        btn.classList.remove('bg-red-500');
+                        btn.classList.add(originalBg);
+                    }, 2000);
+                });
             });
-        }
-
-        // 名词解释数据
-        const concepts = [
-            { term: 'Vibe Coding', desc: '用自然语言跟 AI 对话来写代码。你描述想要什么，AI 帮你实现。', analogy: '就像你对装修工人说：我想要一个开放式厨房，中间放一个大岛台——你不需要自己动手，但你得知道自己要什么。' },
-            { term: 'MVP（最小可用版本）', desc: '只做最核心的一个功能，先能用，再慢慢加功能。', analogy: '想开奶茶店，MVP 是先在街边摆个小推车卖最畅销的一款，而不是一开始就装修门店、开发会员系统。' },
-            { term: 'README / 项目说明书', desc: '记录项目是做什么的、给谁用。AI 没有记忆，靠它快速进入状态。', analogy: '相当于给新来同事写的岗位说明书。把说明书递过去，他立刻知道要做什么。' },
-            { term: '前端 / 后端', desc: '前端是用户能看到和操作的部分；后端负责处理数据和逻辑。', analogy: '餐厅里，菜单和座位是前端；后厨做菜是后端。顾客只看到前端，但好不好吃取决于后端。' },
-            { term: 'API（接口）', desc: '两个软件之间的传话员。', analogy: '就像打客服电话：你说需求，客服转达给后台，再把结果告诉你。API 就是那套标准的沟通流程。' },
-            { term: 'Git（版本控制）', desc: '给代码拍快照的系统。每次改动都有记录，可回滚。', analogy: '就像 Word 的修订模式加上版本历史的超级增强版。' },
-            { term: 'Plan Mode（计划模式）', desc: '先让 AI 列出执行计划，确认没问题再动手。', analogy: '装修前先看效果图，认可了再开工。避免收房时才发现不对。' }
-        ];
-
-        // 渲染折叠面板
-        const accordionContainer = document.getElementById('accordion-container');
-        concepts.forEach(item => {
-            const div = document.createElement('div');
-            div.className = 'accordion-item';
-            div.innerHTML = `
-                <div class="accordion-header" onclick="this.parentElement.classList.toggle('open')">${item.term}</div>
-                <div class="accordion-content">
-                    <p>${item.desc}</p>
-                    <div class="analogy">💡 <strong>生活类比：</strong>${item.analogy}</div>
-                </div>
-            `;
-            accordionContainer.appendChild(div);
         });
     </script>
 </body>
