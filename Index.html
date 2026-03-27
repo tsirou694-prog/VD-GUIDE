@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Vibe Coding 入门随身手册</title>
+    <style>
+        :root {
+            --primary: #007AFF;
+            --bg-color: #F2F2F7;
+            --card-bg: #FFFFFF;
+            --text-main: #1C1C1E;
+            --text-muted: #8E8E93;
+            --border-color: #E5E5EA;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
+            padding-bottom: 80px;
+        }
+
+        /* 顶部导航 */
+        header {
+            background-color: var(--card-bg);
+            padding: 16px 20px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid var(--border-color);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+        h1 { font-size: 20px; font-weight: 600; text-align: center; margin-bottom: 12px;}
+        
+        .nav-tabs {
+            display: flex;
+            justify-content: space-between;
+            overflow-x: auto;
+            scrollbar-width: none;
+        }
+        .nav-tabs::-webkit-scrollbar { display: none; }
+        .nav-tab {
+            font-size: 14px;
+            color: var(--text-muted);
+            text-decoration: none;
+            padding: 6px 12px;
+            white-space: nowrap;
+            border-radius: 16px;
+        }
+        .nav-tab.active {
+            background-color: var(--primary);
+            color: white;
+            font-weight: 500;
+        }
+
+        /* 内容区容器 */
+        main { padding: 16px; }
+        section { display: none; animation: fadeIn 0.3s ease; }
+        section.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+
+        h2 { font-size: 18px; margin: 24px 0 12px 0; color: var(--primary); display: flex; align-items: center; gap: 6px;}
+
+        /* 卡片样式 */
+        .card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+
+        /* 折叠面板 (名词解释) */
+        .accordion-item {
+            border-bottom: 1px solid var(--border-color);
+            padding: 12px 0;
+        }
+        .accordion-item:last-child { border-bottom: none; }
+        .accordion-header {
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+        }
+        .accordion-header::after { content: '+'; color: var(--primary); font-size: 18px;}
+        .accordion-item.open .accordion-header::after { content: '−'; }
+        .accordion-content {
+            display: none;
+            padding-top: 8px;
+            font-size: 14px;
+            color: #333;
+        }
+        .accordion-item.open .accordion-content { display: block; }
+        .analogy { background: #f9f9f9; padding: 8px; border-left: 3px solid var(--primary); margin-top: 6px; font-size: 13px; color: #555;}
+
+        /* 提示词卡片 */
+        .prompt-card { position: relative; }
+        .prompt-title { font-weight: 600; margin-bottom: 8px; font-size: 16px; display: flex; justify-content: space-between; align-items: center;}
+        .prompt-reason { font-size: 12px; color: var(--text-muted); margin-bottom: 12px; background: #f0f0f5; padding: 6px 10px; border-radius: 6px;}
+        .prompt-text {
+            background-color: #282A36;
+            color: #F8F8F2;
+            padding: 16px;
+            border-radius: 8px;
+            font-size: 14px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            font-family: monospace;
+            margin-bottom: 12px;
+        }
+        .copy-btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 500;
+            width: 100%;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .copy-btn.success { background-color: #34C759; }
+
+        /* 流程步骤 */
+        .step-item {
+            display: flex;
+            margin-bottom: 16px;
+        }
+        .step-num {
+            background: var(--primary);
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+            margin-right: 12px;
+            flex-shrink: 0;
+        }
+        .step-content strong { display: block; margin-bottom: 4px; }
+        .step-content p { font-size: 14px; color: #555; margin: 0;}
+
+        /* 标签 */
+        .tag { display: inline-block; background: #e5f0ff; color: var(--primary); padding: 2px 8px; border-radius: 10px; font-size: 12px; margin-right: 6px;}
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Vibe Coding 入门指南</h1>
+        <div class="nav-tabs">
+            <a href="#prompts" class="nav-tab active" onclick="switchTab('prompts')">💬 提示词库</a>
+            <a href="#process" class="nav-tab" onclick="switchTab('process')">🗺️ 核心流程</a>
+            <a href="#concepts" class="nav-tab" onclick="switchTab('concepts')">📖 概念速查</a>
+            <a href="#tips" class="nav-tab" onclick="switchTab('tips')">💡 避坑指南</a>
+        </div>
+    </header>
+
+    <main>
+        <section id="prompts" class="active">
+            <h2>💬 核心提示词模板</h2>
+            
+            <div class="card prompt-card">
+                <div class="prompt-title">0-A：验证想法 <span class="tag">第0步</span></div>
+                <div class="prompt-reason">避免一开始方向走偏，动工前先画草图。</div>
+                <div class="prompt-text" id="p0a">我有一个产品想法：【用一两句话描述你的想法】
+
+我没有编程背景。请帮我：
+1. 用简单的话告诉我这个想法的复杂度（简单/中等/复杂）
+2. 指出我可能没想到的问题
+3. 推荐最适合我用的工具
+4. 告诉我第一步应该做什么
+
+请用非技术人员能理解的语言回答。</div>
+                <button class="copy-btn" onclick="copyText('p0a', this)">一键复制</button>
+            </div>
+
+            <div class="card prompt-card">
+                <div class="prompt-title">0-B：缩小范围，定 MVP <span class="tag">第0步</span></div>
+                <div class="prompt-text" id="p0b">我想做【你的想法】，但我是新手，时间和能力有限。
+
+请帮我设计一个最小可用版本（MVP）：
+- 只保留最核心的一个功能
+- 其他功能列成以后可以加的清单
+- 告诉我这个最小版本大概需要多久能做出来
+
+MVP 是什么意思也请顺带解释一下。</div>
+                <button class="copy-btn" onclick="copyText('p0b', this)">一键复制</button>
+            </div>
+
+            <div class="card prompt-card">
+                <div class="prompt-title">1-A：生成项目说明书 <span class="tag">第1步</span></div>
+                <div class="prompt-reason">解决 AI 没有跨对话记忆的问题。</div>
+                <div class="prompt-text" id="p1a">请帮我写一份项目说明书，我之后每次开始新对话都会把它粘贴给 AI 看。
+
+我的产品叫：【名字】
+要解决的问题：【描述】
+主要用户是：【谁会用它】
+核心功能：【列出 2-3 个】
+我打算用的工具：【比如 Claude.ai，或者还不确定也可以写不确定】
+
+请把说明书写得简洁，让 AI 一眼就能理解这个项目。</div>
+                <button class="copy-btn" onclick="copyText('p1a', this)">一键复制</button>
+            </div>
+
+            <div class="card prompt-card">
+                <div class="prompt-title">1-B：每次新对话开头用这个 <span class="tag">第1步</span></div>
+                <div class="prompt-text" id="p1b">【粘贴你的项目说明书】
+
+以上是我的项目背景。今天我想继续做【具体任务】。
+请先告诉我你理解的项目概况，确认我们在同一个方向上，再开始。</div>
+                <button class="copy-btn" onclick="copyText('p1b', this)">一键复制</button>
+            </div>
+
+            <div class="card prompt-card">
+                <div class="prompt-title">2-A：让 AI 帮你规划结构 <span class="tag">第2步</span></div>
+                <div class="prompt-reason">先列大纲，逻辑清楚了代码才不会跑偏。</div>
+                <div class="prompt-text" id="p2a">我要做【产品名称】，核心功能是【描述】。
+
+请帮我规划这个产品的整体结构：
+1. 用户会看到哪些页面或界面？
+2. 每个页面做什么事？
+3. 数据存在哪里？（比如用户信息、内容记录）
+4. 有没有需要连接外部服务的地方？（比如发邮件、地图、付款）
+
+请用类比或图示的方式解释，不要直接给我写代码。</div>
+                <button class="copy-btn" onclick="copyText('p2a', this)">一键复制</button>
+            </div>
+
+            <div class="card prompt-card">
+                <div class="prompt-title">3-A：先出计划再动手 <span class="tag">第3步</span></div>
+                <div class="prompt-reason">Plan Mode：避免 AI 理解偏差导致大量返工。</div>
+                <div class="prompt-text" id="p3a">我现在要实现这个功能：【描述具体功能】
+
+请先不要写代码。先告诉我：
+1. 你打算怎么做？（步骤清单）
+2. 每一步会产生什么结果？
+3. 有没有我需要提前准备的东西？
+4. 可能遇到什么问题？
+
+我确认计划没问题之后，再请你动手。</div>
+                <button class="copy-btn" onclick="copyText('p3a', this)">一键复制</button>
+            </div>
+
+            <div class="card prompt-card">
+                <div class="prompt-title">3-B：分步执行，一次一步 <span class="tag">第3步</span></div>
+                <div class="prompt-text" id="p3b">计划我看过了，没问题。
+
+请先只做第一步：【复述计划的第一步】
+做完之后告诉我：
+- 做了什么
+- 我需要怎么验证它是否成功
+- 下一步是什么
+
+一次只做一步，做完等我确认再继续。</div>
+                <button class="copy-btn" onclick="copyText('p3b', this)">一键复制</button>
+            </div>
+
+            <div class="card prompt-card">
+                <div class="prompt-title">4-A：报错 / 出问题时用这个 <span class="tag">第4步</span></div>
+                <div class="prompt-text" id="p4a">出问题了，我来描述一下情况：
+
+【我做了什么操作】
+【出现了什么现象，或者看到了什么错误信息——截图或复制粘贴过来】
+【我期望它应该怎样】
+
+请先解释这个问题是什么原因，然后给我最简单的解决方法。
+如果有多种解决方法，告诉我哪种最适合新手。</div>
+                <button class="copy-btn" onclick="copyText('p4a', this)">一键复制</button>
+            </div>
+
+            <div class="card prompt-card">
+                <div class="prompt-title">5-A：总结这次做了什么 <span class="tag">第5步</span></div>
+                <div class="prompt-text" id="p5a">我们今天完成了【功能名称】。
+
+请帮我写一份简短的总结，包括：
+1. 做了什么（一句话）
+2. 用到了哪些工具或技术（用大白话解释）
+3. 下次遇到类似需求，我应该怎么开始
+
+我要把这份总结存起来备用。</div>
+                <button class="copy-btn" onclick="copyText('p5a', this)">一键复制</button>
+            </div>
+
+            <h2>🌟 万能提示词</h2>
+            <div class="card prompt-card">
+                <div class="prompt-title">遇到不懂的概念时</div>
+                <div class="prompt-text" id="p_concept">我刚接触到一个词：【概念名词】
+
+请用以下方式解释给我听：
+1. 一句话定义
+2. 生活中的类比
+3. 在我做的产品里，它具体指什么
+4. 我需要学到什么程度才够用？（新手够用级别就好）</div>
+                <button class="copy-btn" onclick="copyText('p_concept', this)">一键复制</button>
+            </div>
+            
+            <div class="card prompt-card">
+                <div class="prompt-title">需要 AI 扮演特定角色时</div>
+                <div class="prompt-text" id="p_role">接下来请你扮演一个【角色，比如：有经验的产品经理 / UX 设计师 / 技术顾问】
+你的任务是帮我审查我的产品方案，找出问题和改进空间。
+
+请用对外行友好的方式沟通，遇到技术概念请用类比解释。
+
+我的方案是：【描述你的产品或功能】</div>
+                <button class="copy-btn" onclick="copyText('p_role', this)">一键复制</button>
+            </div>
+        </section>
+
+        <section id="process">
+            <h2>🗺️ Vibe Coding 全流程</h2>
+            <div class="card">
+                <div class="step-item">
+                    <div class="step-num">1</div>
+                    <div class="step-content">
+                        <strong>想清楚 (验证想法 & 定最小版本)</strong>
+                        <p>先写策划书，确认方向对了再投入时间。</p>
+                    </div>
+                </div>
+                <div class="step-item">
+                    <div class="step-num">2</div>
+                    <div class="step-content">
+                        <strong>写说明书 (让 AI 记住项目背景)</strong>
+                        <p>写工作交接文件，方便每次新对话快速进入状态。</p>
+                    </div>
+                </div>
+                <div class="step-item">
+                    <div class="step-num">3</div>
+                    <div class="step-content">
+                        <strong>定结构 (规划整体框架)</strong>
+                        <p>先列文章大纲再动手，避免越改越乱。</p>
+                    </div>
+                </div>
+                <div class="step-item">
+                    <div class="step-num">4</div>
+                    <div class="step-content">
+                        <strong>分步执行 (出计划，逐步确认)</strong>
+                        <p>Plan Mode：装修前看效果图，一次只做一步。</p>
+                    </div>
+                </div>
+                <div class="step-item">
+                    <div class="step-num">5</div>
+                    <div class="step-content">
+                        <strong>沉淀复用 (存成模板)</strong>
+                        <p>把好用的流程存成模板，建立个人提示词库。</p>
+                    </div>
+                </div>
+            </div>
+
+            <h2>🛠 常用工具速查</h2>
+            <div class="card">
+                <ul style="padding-left: 20px; font-size: 14px; line-height: 2;">
+                    <li><strong>Claude.ai:</strong> 生成脚本、处理文本、规划逻辑 ⭐</li>
+                    <li><strong>Cursor:</strong> 写网页小工具，有 AI 辅助写代码 ⭐⭐</li>
+                    <li><strong>Replit:</strong> 一键运行代码，不用自己配置环境 ⭐⭐</li>
+                    <li><strong>v0.dev:</strong> 直接用文字描述生成网页界面 ⭐⭐</li>
+                    <li><strong>Bubble / Webflow:</strong> 做网页产品，基本不写代码 ⭐⭐</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="concepts">
+            <h2>📖 核心名词解释</h2>
+            <div class="card" id="accordion-container">
+                </div>
+        </section>
+
+        <section id="tips">
+            <h2>💡 三个最重要的习惯</h2>
+            <div class="card">
+                <strong style="color: var(--primary);">1. 永远先要计划，再要执行</strong>
+                <p style="font-size: 14px; margin: 8px 0 16px 0;">遇到任何超过 3 步的任务，先让 AI 列计划。你认可了再说开始。这能帮你避免 80% 的返工。</p>
+
+                <strong style="color: var(--primary);">2. 一次只做一件事</strong>
+                <p style="font-size: 14px; margin: 8px 0 16px 0;">不要在一条提示词里塞太多需求。做完一件确认没问题再做下一件。AI 处理多个指令容易顾此失彼。</p>
+
+                <strong style="color: var(--primary);">3. 把好用的提示词存下来</strong>
+                <p style="font-size: 14px; margin: 8px 0 0 0;">每次 AI 给了一个特别好用的回答，把那条提示词存进你的文档里，你的库会越来越强。</p>
+            </div>
+
+            <h2>⚠️ 三个常见误区</h2>
+            <div class="card">
+                <ul style="padding-left: 20px; font-size: 14px; line-height: 2;">
+                    <li><strong>把 AI 当搜索引擎：</strong> 验证重要信息要去看原始资料。</li>
+                    <li><strong>直接说帮我做一个 App：</strong> 需求太模糊，AI 会做错误假设。先验证想法再推进。</li>
+                    <li><strong>不懂就跳过：</strong> 不要假装懂了继续往下走，用万能提示词问清楚。</li>
+                </ul>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        // 导航切换逻辑
+        function switchTab(tabId) {
+            document.querySelectorAll('.nav-tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('section').forEach(sec => sec.classList.remove('active'));
+            
+            event.target.classList.add('active');
+            document.getElementById(tabId).classList.add('active');
+            window.scrollTo(0, 0);
+        }
+
+        // 一键复制逻辑
+        function copyText(elementId, btnElement) {
+            const textToCopy = document.getElementById(elementId).innerText;
+            navigator.clipboard.writeText(textToCopy).then(() => {
+                const originalText = btnElement.innerText;
+                btnElement.innerText = '✅ 已复制';
+                btnElement.classList.add('success');
+                
+                setTimeout(() => {
+                    btnElement.innerText = originalText;
+                    btnElement.classList.remove('success');
+                }, 2000);
+            }).catch(err => {
+                console.error('复制失败:', err);
+                alert('复制失败，请手动长按复制');
+            });
+        }
+
+        // 名词解释数据
+        const concepts = [
+            { term: 'Vibe Coding', desc: '用自然语言跟 AI 对话来写代码。你描述想要什么，AI 帮你实现。', analogy: '就像你对装修工人说：我想要一个开放式厨房，中间放一个大岛台——你不需要自己动手，但你得知道自己要什么。' },
+            { term: 'MVP（最小可用版本）', desc: '只做最核心的一个功能，先能用，再慢慢加功能。', analogy: '想开奶茶店，MVP 是先在街边摆个小推车卖最畅销的一款，而不是一开始就装修门店、开发会员系统。' },
+            { term: 'README / 项目说明书', desc: '记录项目是做什么的、给谁用。AI 没有记忆，靠它快速进入状态。', analogy: '相当于给新来同事写的岗位说明书。把说明书递过去，他立刻知道要做什么。' },
+            { term: '前端 / 后端', desc: '前端是用户能看到和操作的部分；后端负责处理数据和逻辑。', analogy: '餐厅里，菜单和座位是前端；后厨做菜是后端。顾客只看到前端，但好不好吃取决于后端。' },
+            { term: 'API（接口）', desc: '两个软件之间的传话员。', analogy: '就像打客服电话：你说需求，客服转达给后台，再把结果告诉你。API 就是那套标准的沟通流程。' },
+            { term: 'Git（版本控制）', desc: '给代码拍快照的系统。每次改动都有记录，可回滚。', analogy: '就像 Word 的修订模式加上版本历史的超级增强版。' },
+            { term: 'Plan Mode（计划模式）', desc: '先让 AI 列出执行计划，确认没问题再动手。', analogy: '装修前先看效果图，认可了再开工。避免收房时才发现不对。' }
+        ];
+
+        // 渲染折叠面板
+        const accordionContainer = document.getElementById('accordion-container');
+        concepts.forEach(item => {
+            const div = document.createElement('div');
+            div.className = 'accordion-item';
+            div.innerHTML = `
+                <div class="accordion-header" onclick="this.parentElement.classList.toggle('open')">${item.term}</div>
+                <div class="accordion-content">
+                    <p>${item.desc}</p>
+                    <div class="analogy">💡 <strong>生活类比：</strong>${item.analogy}</div>
+                </div>
+            `;
+            accordionContainer.appendChild(div);
+        });
+    </script>
+</body>
+</html>
